@@ -17,19 +17,20 @@ driver.get("https://www.redfin.com/NJ/West-Deptford/877-Dante-Ct-08051/home/3649
 
 
 
-print("\nScraping page..")
+print("Scraping page..")
 
-reviews = driver.find_elements_by_xpath('.//span[@class="street-address"]').text
+address = driver.find_elements_by_xpath('.//span[@class="street-address"]')[0].text 
 
-print(reviews)				#trying to print out the first part of list is sending garbage 
+print(address)				#trying to print out the first part of list is sending garbage 
 
-price = driver.find_elements_by_xpath('.//div[@class="statValue"]').text
+price = driver.find_elements_by_xpath('.//span[@class="statValue"]')
 
 print(price)
 
 numbed = driver.find_elements_by_xpath('.//div[@class="statValue"]')
 
 print(numbed) 
+
 driver.close() 
 
 
