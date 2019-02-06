@@ -8,6 +8,8 @@ driver = webdriver.Chrome()
 # Go to the page that we want to scrape
 driver.get("https://www.redfin.com/NJ/West-Deptford/877-Dante-Ct-08051/home/36494417")
 
+
+
 # Click review button to go to the review section
 #estimate_button = driver.find_element_by_xpath('//*[@id="content"]/div[6]/div[4]/div/div/div/div/div[4]/a')
 
@@ -23,15 +25,31 @@ address = driver.find_elements_by_xpath('.//span[@class="street-address"]')[0].t
 
 print(address)				#trying to print out the first part of list is sending garbage 
 
-price = driver.find_elements_by_xpath('.//span[@class="statValue"]')
+price = driver.find_elements_by_xpath('.//span[@class="statsValue"]')[0].text
 
 print(price)
 
-numbed = driver.find_elements_by_xpath('.//div[@class="statValue"]')
+numbed = driver.find_elements_by_xpath('.//div[@class="statsValue"]')[0].text
 
 print(numbed) 
 
+
+#county = driver.find_elements_by_xpath('//*[@id="basicInfo"]/div[2]/div[1]/div[11]/div')
+county = driver.find_elements_by_xpath('.//div[@class="table-value"]')[0].text
+
+print(county) #printing a '-' instead of county 
+
+
+mls = driver.find_elements_by_xpath('.//span[@class="header font-color-gray-light font-weight-roman"]')[0].text  
+
+print(mls)   # printing style instead of MLS #
+
+price1 = driver.find_elements_by_xpath('.//td[@class="price-col number"]')[0]
+
+#print(price1)     
+
 driver.close() 
+
 
 
 #git hub line for errors 
