@@ -19,7 +19,7 @@ driver.get("https://www.redfin.com/NJ/West-Deptford/877-Dante-Ct-08051/home/3649
 
 
 
-print("Scraping page..")
+print("Scraping page...")
 
 address = driver.find_elements_by_xpath('.//span[@class="street-address"]')[0].text 
 
@@ -42,11 +42,17 @@ print(county) #printing a '-' instead of county
 
 mls = driver.find_elements_by_xpath('.//span[@class="header font-color-gray-light font-weight-roman"]')[0].text  
 
-print(mls)   # printing style instead of MLS #
+print(mls)   # printing 'Style' instead of MLS #
 
-price1 = driver.find_elements_by_xpath('.//td[@class="price-col number"]')[0]
+price1 = driver.find_elements_by_xpath('.//td[@class="price-col number"]')[0].text  # output: price1 is $110,000
 
-#print(price1)     
+print(price1)  
+
+price2 = driver.find_element_by_xpath('.//td[@class="price-col number"]').text    # output is $110,000 price2 is a part of a table, can this be printed?
+print(price2)
+
+print('*' * 50) 
+
 
 driver.close() 
 
