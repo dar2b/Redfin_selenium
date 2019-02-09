@@ -29,13 +29,11 @@ class redStarter:
 	#county = driver.find_elements_by_xpath('//*[@id="basicInfo"]/div[2]/div[1]/div[11]/div')
 	#county = driver.find_elements_by_xpath('.//div[@class="table-value"]')[0].text
 	#print(county) #printing a '-' instead of county 
-
 	mls = driver.find_elements_by_xpath('.//span[@class="header font-color-gray-light font-weight-roman"]')[0].text  
 	print(mls)   # printing 'Style' instead of MLS #
 
 	price1 = driver.find_elements_by_xpath('.//td[@class="price-col number"]')[0].text  # output: price1 is $110,000
 	#print(price1)  
-
 	#price2 = driver.find_element_by_xpath('.//td[@class="price-col number"]').text    # output is $110,000 price2 is a part of a table, can this be printed?
 	#print(price2)
 
@@ -84,6 +82,5 @@ def dataProcess(colum):
 	
 
 dataProcess(data) 
- 
 
 #git hub line for errors 
