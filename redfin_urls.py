@@ -1,6 +1,9 @@
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-
+import redfin_starter as redstart
 import pandas as pd
 
 
@@ -10,7 +13,7 @@ urls = ['https://www.redfin.com/NJ/West-Deptford/877-Dante-Ct-08051/home/3649441
 
 
 
-data = []
+data1 = {}
 
 
 driver = webdriver.Chrome()
@@ -18,5 +21,6 @@ driver = webdriver.Chrome()
 for url in urls:
     for page in range(1,8):
     	driver.get(url)
-    	
+    	wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "div#tournamentTable tr.deactivate")))
 
+redstart.dataProcess(data1) 
