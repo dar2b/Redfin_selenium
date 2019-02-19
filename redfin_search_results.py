@@ -20,7 +20,7 @@ try:
 
 			csvfile = open('search_results.csv', 'w')
 			writer = csv.writer(csvfile)
-			search_results_urls_header = ['url']   # What is this line and where are the actual URLs written? 
+			search_results_urls_header = ['url']   
 			writer.writerow(search_results_urls_header)
 
 			#elems = driver.find_elements_by_xpath('//div[@class="homecardv2"]/a[@href]')
@@ -36,7 +36,7 @@ try:
 				#elems = driver.find_elements_by_xpath('//div[@class="homecardv2"]/a[@href]')
 
 				try:
-					print("Scraping Page number " + str(index))
+					print("Scraping Page number " + str(index + 1)) #to show count number in terminal 
 					#index = index + 1
 					
 					elems = driver.find_elements_by_xpath('//div[@class="homecardv2"]/a[@href]')
@@ -48,9 +48,9 @@ try:
 						home_link['url'] = elem.get_attribute('href')
 						writer.writerow(home_link.values())
 							
-					button = driver.find_element_by_xpath('//button[@class="clickable buttonControl button-text"]')
+					button = driver.find_elements_by_xpath('//button[@class="clickable buttonControl button-text"]')[-1]
 					button.click()
-					time.sleep(5)
+					time.sleep(2)
 					index = index + 1
 
 				except Exception as e:
