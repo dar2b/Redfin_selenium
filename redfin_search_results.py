@@ -37,21 +37,21 @@ try:
 
 				try:
 					print("Scraping Page number " + str(index))
-					index = index + 1
+					#index = index + 1
 					
 					elems = driver.find_elements_by_xpath('//div[@class="homecardv2"]/a[@href]')
 
 					
 					for elem in elems: 
 						home_link={} 
-						elems = driver.find_elements_by_xpath('//div[@class="homecardv2"]/a[@href]')
+						#elems = driver.find_elements_by_xpath('//div[@class="homecardv2"]/a[@href]')
 						home_link['url'] = elem.get_attribute('href')
 						writer.writerow(home_link.values())
 							
 					button = driver.find_element_by_xpath('//button[@class="clickable buttonControl button-text"]')
 					button.click()
-					time.sleep(2)
-				
+					time.sleep(5)
+					index = index + 1
 
 				except Exception as e:
 					print(e)
