@@ -20,11 +20,12 @@ writer.writerow(details_page_info_headers)
 for url in list_of_search_result_urls:
 	# Go to the page that we want to scrape					#other values first then table 
 	driver.get(url)
+
 	price_dict={}
 	product_price = driver.find_element_by_xpath("//div[@class='info-block price']").text
-	product = product_price.strip('b \n $ Price')    #remove $ 
-	print('\n' + product)
-	price_dict['name'] = product       #.encode('utf-8')
+	price = product_price.strip('b \n $ Price')    #remove $ ... how do you remove " "  around price ?
+	print('\n' + price)
+	price_dict['name'] = price       #.encode('utf-8')
 	
 	bed = driver.find_element_by_xpath("//div[@class='info-block']/div[@class='statsValue']").text
 	print('Bed ' + bed)

@@ -14,9 +14,9 @@ urls = ['https://www.redfin.com/county/1898/NJ/Gloucester-County/page-', 'https:
 try:
 	for url in urls:
 		for page in range(1, 2):								
-			driver.get(url + str(page)) 
+			driver.get(url) #+ str(page)) 
 			print(url)
-			print(page)
+			#print(page)
 
 			csvfile = open('search_results.csv', 'w')
 			writer = csv.writer(csvfile)
@@ -30,13 +30,13 @@ try:
 			num = num1.strip('f ')
 			int_num = int(num)
 
-			index = 0
+			index = 1
 			while index <= int_num:
 
 				#elems = driver.find_elements_by_xpath('//div[@class="homecardv2"]/a[@href]')
 
 				try:
-					print("Scraping Page number " + str(index + 1)) #to show count number in terminal 
+					print("Scraping Page number " + str(index)) #to show count number in terminal 
 					#index = index + 1
 					
 					elems = driver.find_elements_by_xpath('//div[@class="homecardv2"]/a[@href]')
@@ -48,7 +48,7 @@ try:
 						home_link['url'] = elem.get_attribute('href')
 						writer.writerow(home_link.values())
 							
-					button = driver.find_elements_by_xpath('//button[@class="clickable buttonControl button-text"]')[-1]
+					button = driver.find_elements_by_xpath('//button[@class="clickable buttonControl button-text"]')[-1] #bug on page 17 to 18 Gloucester County, dublicates data
 					button.click()
 					time.sleep(2)
 					index = index + 1
