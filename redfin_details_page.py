@@ -41,6 +41,17 @@ for url in list_of_search_result_urls:
 	asset_estate['sq_feet'] = sq_feet
 
 
+
+	###### historical pricing or time series -- delete from here down to use script ######
+	#button = driver.find_element_by_xpath('.//span[@class="bottomLink font-color-link"]')		#button erroring when not avaiable to click on first page 
+	#button.click()
+
+	table = driver.find_element_by_xpath('.//table[@class="basic-table-2"]').text      
+	print(table)
+
+
+	#####real esate historical pricing 
+
 	#property_value = driver.find_element_by_xpath("//div[@class='no-break-inside'/li[@class='entryItem']").text  #xpath for property value not scraping 
 	#print('acres' + property_value)
 
