@@ -55,7 +55,7 @@ def dataProcess(colum):
 	csv_file = open('pricing.csv', 'w', encoding='utf-8')         #save every 500 rows of data, if a problem w script 
 	writer = csv.writer(csv_file)
 	
-	table = driver.find_element_by_xpath('.//table[@class="basic-table-2"]').text 
+	table = driver.find_element_by_xpath('.//table[@class="basic-table-2"]').text
 	#print(table)
 
 	for ele in table:	
@@ -75,7 +75,7 @@ def dataProcess(colum):
 			print(colum)
 			writer.writerow(colum.values())
 		
-			if i == 9: 						#  set at 8 for each column 
+			if i == 7: 						#  set at 8 for each column 
 				break 
 				driver.close()
 		break 
