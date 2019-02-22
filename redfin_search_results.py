@@ -18,7 +18,7 @@ try:
 			print(url)
 			#print(page)
 
-			csvfile = open('search_results.csv', 'w')
+			csvfile = open('search_results.csv', 'w')								#search_results.csv is resetting and rewriting for each URL. 
 			writer = csv.writer(csvfile)
 			search_results_urls_header = ['url']   
 			writer.writerow(search_results_urls_header)
@@ -29,11 +29,9 @@ try:
 			num1 = pages.strip('Viewing page 1 o')
 			num = num1.strip('f ')
 			int_num = int(num)
-
+			upper = int_num - 1 
 			index = 1
-			while index <= int_num:
-
-				#elems = driver.find_elements_by_xpath('//div[@class="homecardv2"]/a[@href]')
+			while index <= upper:       
 
 				try:
 					print("Scraping Page number " + str(index)) #to show count number in terminal 
