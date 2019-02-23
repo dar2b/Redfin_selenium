@@ -14,7 +14,7 @@ list_of_search_result_urls = list(pd.read_csv('search_results.csv')['url'])
 # create a file for details page scraping
 csv_file = open('details_page_info.csv', 'w')
 writer = csv.writer(csv_file)
-details_page_info_headers = ['Price', 'Beds', 'Bath', 'Square feet', '$ per Sq. Ft.', 'County']	 
+details_page_info_headers = ['Price', 'Beds', 'Bath', 'Town' 'Square feet', '$ per Sq. Ft.', 'Property Value', 'County']	 
 writer.writerow(details_page_info_headers)								## The counties should be compared. Should I have county data included and seperated for the dataset(s)? Included 'county'.
 
 for url in list_of_search_result_urls:
@@ -33,60 +33,86 @@ for url in list_of_search_result_urls:
 		pass  
 
 
+	try:
+		product_price = driver.find_element_by_xpath("//div[@class='info-block price']").text
+		
+		resi_price = product_price.strip('b \n $ Price')    					
+		resi_price_ = resi_price.strip(' \n Listed at price ').strip('Last Sol')
+		resi_price_2 = resi_price_.replace(',', '')
+		int_resi_price = resi_price_2
 
-	product_price = driver.find_element_by_xpath("//div[@class='info-block price']").text
+		print('\n' + int_resi_price)
+		resi_estate['Price'] = int_resi_price       			#.encode('utf-8')
+		
+		bed_dict={}
+		bed = driver.find_element_by_xpath("//div[@class='info-block']/div[@class='statsValue']").text
+		print('Bed ' + bed)
+		resi_estate['Beds'] = bed
 
-	resi_price = product_price.strip('b \n $ Price')    						#remove $ ... how do you remove " "  around price ?
-	resi_price_ = resi_price.strip(' \n Listed at price ')
-	resi_price_2 = resi_price_.replace(',', '')
+		bath = driver.find_element_by_xpath("//div[@data-rf-test-id='abp-baths']/div[@class='statsValue']").text
+		print('Bath ' + bath) 
+		resi_estate['bath'] = bath
 
-	int_resi_price = resi_price_2
+		town_name = driver.find_element_by_xpath("//span[@itemprop='addressLocality']").text
+		town_name_edit= town_name.strip(',')
+		#town_name = town_or_community.strip('\n Community')
+		print(town_name_edit)
+		#resi_estate['town'] = town_name_edit
 
-	print('\n' + int_resi_price)
-	resi_estate['Price'] = int_resi_price       			#.encode('utf-8')
 	
-	bed_dict={}
-	bed = driver.find_element_by_xpath("//div[@class='info-block']/div[@class='statsValue']").text
-	print('Bed ' + bed)
-	resi_estate['Beds'] = bed
+		sq_feet = driver.find_element_by_xpath("//div[@class='info-block sqft']").text	
 
-	bath = driver.find_element_by_xpath("//div[@data-rf-test-id='abp-baths']/div[@class='statsValue']").text
-	print('Bath ' + bath) 
-	resi_estate['bath'] = bath
+		sq_feet_split = sq_feet.split('$' )											## how do you seperate the string and make it into two variables? Removed the dollar sign. 
+		square_footage = sq_feet_split[0] 
+		square_foot_dollar = sq_feet_split[1]
+		square_foot_total = square_footage.replace('Sq. Ft.' , '')					#.strip was not working on this function. Why? 
+		square_foot_noline =  square_foot_total.strip(' \n')
+		square_foot_comma = square_foot_noline.replace(',' ,'')	
+		dollar_per = square_foot_dollar.strip('/ Sq. Ft.')	
 
-	sq_feet = driver.find_element_by_xpath("//div[@class='info-block sqft']").text	
-
-	sq_feet_split = sq_feet.split('$' )											## how do you seperate the string and make it into two variables? Removed the dollar sign. 
-	square_footage = sq_feet_split[0] 
-	square_foot_dollar = sq_feet_split[1]
-	square_foot_total = square_footage.replace('Sq. Ft.' , '')					#.strip was not working on this function. Why? 
-	square_foot_noline =  square_foot_total.strip(' \n')
-	square_foot_comma = square_foot_noline.replace(',' ,'')	
-	dollar_per = square_foot_dollar.strip('/ Sq. Ft.')	
-
-	print(square_foot_comma, dollar_per)
-	resi_estate['sq feet'] = square_foot_comma
-	resi_estate['sq_feet_per_$'] = dollar_per
-
+		print('Sq FT and $/per : ' + square_foot_comma, dollar_per)
+		resi_estate['sq feet'] = square_foot_comma
+		resi_estate['sq_feet_per_$'] = dollar_per
+	
 
 	###### historical pricing or time series -- delete from here down to use script ######
-	try: 
+	#try: 
 		button = driver.find_element_by_xpath('.//span[@class="bottomLink font-color-link"]')		              
 		button.click()																					
 		table = driver.find_element_by_xpath('.//table[@class="basic-table-2"]').text      
-		print(table)
+		table_2 = table.strip('Listed (Active)')
+		print(table_2)
 
 		no_button_table = driver.find_element_by_xpath('.//tr[@class="PropertyHistoryEventRow"]') 			##This xpath is not taking the home's pricing information that does not have a full table or button
 		print(no_button_table)
+	#except:
+	#	pass  
+
+		prop = driver.find_element_by_xpath("//div[@class='tax-table']").text
+		prop_format= prop.strip('$ Land ').split('\n')
+		property_val_no_comma = prop_format[0].replace(',','')
+		additions_price = prop_format[1].replace(',','').strip('$ Additions')
+		total_taxable_value	= prop_format[2].replace(',','').strip('$ Total')
+		#prop_strip = prop_format.split('$ ') 
+
+		print(property_val_no_comma)
+		resi_estate['property value'] = property_val_no_comma
+		print(additions_price)
+		print(total_taxable_value)
+
+		MLS = driver.find_elements_by_xpath("//div[@class='keyDetail font-size-base']")[7].text	
+		MLS = town_or_community.strip('\n ')
+		print(MLS)
+		#town_or_community = driver.find_elements_by_xpath("//div[@class='keyDetail font-size-base']")[1].text		
+		#town_name = town_or_community.strip('\n Community')
+		#print(town_name)
+		#resi_estate['town'] = town_name
+
+		county_type = driver.find_element_by_xpath("//span[@class='content font-weight-roman']/a[@href]").text	
+		print(county_type)
+		resi_estate['county'] = county_type
 	except:
-		pass  
-
-
-
-	county_type = driver.find_element_by_xpath("//span[@class='content font-weight-roman']/a[@href]").text	
-	print(county_type)
-	resi_estate['county'] = county_type
-
+		pass
 
 
 	##resi_price = "289,900 \n Listed on price"
@@ -116,7 +142,7 @@ for url in list_of_search_result_urls:
 	#print(acres_num)
 	
 	
-	writer.writerow(resi_estate.values()) 
+	writer.writerow(resi_estate.values())    ## What is the purpose of coverting into a dataframe?
 
 
 	
@@ -129,7 +155,7 @@ for url in list_of_search_result_urls:
 ##17,600.00	cash at closing
 
 
-### sum and scrap loan information for debt serviced 
+### sum and scrape loan information for debt serviced 
 ##pd.Dataframe(price_dict)
 
 
