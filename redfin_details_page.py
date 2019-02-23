@@ -80,8 +80,13 @@ for url in list_of_search_result_urls:
 		button = driver.find_element_by_xpath('.//span[@class="bottomLink font-color-link"]')		              
 		button.click()																					
 		table = driver.find_element_by_xpath('.//table[@class="basic-table-2"]').text      
-		table_2 = table.strip('Listed (Active)')
+		table_2 = table.split('\n')
 		print(table_2)
+		date = table_2[1]
+		print(date)
+		mls_price = table_2[3].strip('BRIGHT')
+		print(mls_price)
+
 
 		no_button_table = driver.find_element_by_xpath('.//tr[@class="PropertyHistoryEventRow"]') 			##This xpath is not taking the home's pricing information that does not have a full table or button
 		print(no_button_table)
