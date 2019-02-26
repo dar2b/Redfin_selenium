@@ -8,14 +8,21 @@ import pandas as pd
 # driver = webdriver.Chrome(r'path\to\the\chromedriver.exe')
 driver = webdriver.Chrome()
 
-# read in list of urls from search result
-list_of_search_result_urls = list(pd.read_csv('search_results.csv')['url'])
 
-# create a file for details page scraping
-csv_file = open('details_page_info.csv', 'w')
-writer = csv.writer(csv_file)
-details_page_info_headers = ['Price', 'Beds', 'Bath', 'Town' 'Square feet', '$ per Sq. Ft.', 'Property Value', 'County']	 
-writer.writerow(details_page_info_headers)								## The counties should be compared. Should I have county data included and seperated for the dataset(s)? Included 'county'.
+index_file = 0
+
+for index_file in range(0, 2): 
+
+# read in list of urls from search result
+	list_of_search_result_urls = list(pd.read_csv('search_results_{}.csv'.format(index_file))['url'])
+
+	index_file = index_file + 1
+
+	# create a file for details page scraping
+	csv_file = open('details_page_info.csv', 'w')
+	writer = csv.writer(csv_file)
+	details_page_info_headers = ['MLS ID', 'Home Price', 'Beds', 'Bath', 'Town', 'Square feet', '$ per Sq. Ft.', 'Land Value', 'County']	 
+	writer.writerow(details_page_info_headers)								## The counties should be compared. Should I have county data included and seperated for the dataset(s)? Included 'county'.
 
 for url in list_of_search_result_urls:
 	# Go to the page that we want to scrape								#other values first then table 
@@ -23,17 +30,20 @@ for url in list_of_search_result_urls:
 
 	resi_estate={}
 	
-	try: 
+	
 		## Need MLS ID for primary key 
-		button = driver.find_element_by_xpath('.//span[@class="bottomLink font-color-link"]')		              ## MLS ID should come first in script 
-		button.click()
-		mls_id = driver.find_elements_by_xpath("//div[@class='source-info font-b2 font-color-gray-light']").text    #span[@class='header font-color-gray-light font-weight-roman']/ .. taking the wrong class 
-		print(mls_id)
-	except:
-		pass  
+		#button = driver.find_element_by_xpath('.//span[@class="bottomLink font-color-link"]')		              ## MLS ID should come first in script 
+		#button.click()
+
+ 
 
 
 	try:
+		mls_id = driver.find_element_by_xpath("//div[@class='source-info font-b2 font-color-gray-light']").text    #span[@class='header font-color-gray-light font-weight-roman']/ .. taking the wrong class 
+		mls_id_stripped = mls_id.strip('BRIGHT MLS ')
+		print('\n' + 'MLS ID ' + mls_id_stripped)
+		resi_estate['MLS ID'] = mls_id_stripped
+
 		product_price = driver.find_element_by_xpath("//div[@class='info-block price']").text
 		
 		resi_price = product_price.strip('b \n $ Price')    					
@@ -41,7 +51,7 @@ for url in list_of_search_result_urls:
 		resi_price_2 = resi_price_.replace(',', '')
 		int_resi_price = resi_price_2
 
-		print('\n' + int_resi_price)
+		print(int_resi_price)
 		resi_estate['Price'] = int_resi_price       			#.encode('utf-8')
 		
 		bed_dict={}
@@ -57,7 +67,7 @@ for url in list_of_search_result_urls:
 		town_name_edit= town_name.strip(',')
 		#town_name = town_or_community.strip('\n Community')
 		print(town_name_edit)
-		#resi_estate['town'] = town_name_edit
+		resi_estate['town'] = town_name_edit
 
 	
 		sq_feet = driver.find_element_by_xpath("//div[@class='info-block sqft']").text	
@@ -79,13 +89,66 @@ for url in list_of_search_result_urls:
 	#try: 
 		button = driver.find_element_by_xpath('.//span[@class="bottomLink font-color-link"]')		              
 		button.click()																					
-		table = driver.find_element_by_xpath('.//table[@class="basic-table-2"]').text      
-		table_2 = table.split('\n')
-		print(table_2)
-		date = table_2[1]
+		table = driver.find_element_by_xpath('.//table[@class="basic-table-2"]').text      		## Last price in table is cut off  
+		table_seperate = table.split('\n')
+		print(table_seperate)
+		date = table_seperate[1]
 		print(date)
-		mls_price = table_2[3].strip('BRIGHT')
-		print(mls_price)
+		date_second= table_seperate[4]
+		print(date_second)
+		date_third = table_seperate[7].strip('Delisted')
+		print(date_third)
+
+
+		##TVM on a three year span; discount the rate of return by the present day morgage rate 
+
+		#mls_price = table_seperate[3].split('$')
+		#bright_mls_price = mls_price[1].strip()
+		#print(bright_mls_price)
+
+		split_mls_price = table_seperate[3].strip('BRIGHT').split()
+		
+		mls_id = split_mls_price[1] 
+		print(mls_id)
+
+		price_one = split_mls_price[2].replace(',' , '').strip('$')
+		print(price_one)
+
+		price_two = table_seperate[6].strip('Public Records')
+		price_dollar = price_two.strip('2.6/y').replace(',','')
+		price_appreication = price_dollar.strip('2.6%').replace('$','')   			# change for other percentages?
+		print(price_appreication)
+
+
+		#price_two = table_seperate[] 
+
+
+
+
+		prop = driver.find_element_by_xpath("//div[@class='tax-table']").text
+		prop_format= prop.strip('$ Land ').split('\n')
+		property_val_no_comma = prop_format[0].replace(',','')
+		additions_price = prop_format[1].replace(',','').strip('$ Additions')
+		total_taxable_value	= prop_format[2].replace(',','').strip('$ Total')
+
+
+
+		print(property_val_no_comma)
+		resi_estate['land value '] = property_val_no_comma
+
+		#lot_size = driver.find_element_by_xpath("//div[@class='header font-color-gray-light font-weight-roman']").text
+		#print('Lot ' + lot_size)
+
+		print(additions_price)
+		print(total_taxable_value)
+
+
+
+		county_type = driver.find_element_by_xpath("//span[@class='content font-weight-roman']/a[@href]").text	
+		print(county_type)
+		resi_estate['county'] = county_type
+
+		## .append() dates, MLS, and prices together 
 
 
 		no_button_table = driver.find_element_by_xpath('.//tr[@class="PropertyHistoryEventRow"]') 			##This xpath is not taking the home's pricing information that does not have a full table or button
@@ -93,31 +156,33 @@ for url in list_of_search_result_urls:
 	#except:
 	#	pass  
 
-		prop = driver.find_element_by_xpath("//div[@class='tax-table']").text
-		prop_format= prop.strip('$ Land ').split('\n')
-		property_val_no_comma = prop_format[0].replace(',','')
-		additions_price = prop_format[1].replace(',','').strip('$ Additions')
-		total_taxable_value	= prop_format[2].replace(',','').strip('$ Total')
+		#prop = driver.find_element_by_xpath("//div[@class='tax-table']").text
+		#prop_format= prop.strip('$ Land ').split('\n')
+		#property_val_no_comma = prop_format[0].replace(',','')
+		#additions_price = prop_format[1].replace(',','').strip('$ Additions')
+		#total_taxable_value	= prop_format[2].replace(',','').strip('$ Total')
 		#prop_strip = prop_format.split('$ ') 
 
-		print(property_val_no_comma)
-		resi_estate['property value'] = property_val_no_comma
-		print(additions_price)
-		print(total_taxable_value)
+		#print(property_val_no_comma)
+		#resi_estate['property value'] = property_val_no_comma
+		#print(additions_price)
+		#print(total_taxable_value)
 
 		MLS = driver.find_elements_by_xpath("//div[@class='keyDetail font-size-base']")[7].text	
 		MLS = town_or_community.strip('\n ')
 		print(MLS)
+
 		#town_or_community = driver.find_elements_by_xpath("//div[@class='keyDetail font-size-base']")[1].text		
 		#town_name = town_or_community.strip('\n Community')
 		#print(town_name)
 		#resi_estate['town'] = town_name
 
-		county_type = driver.find_element_by_xpath("//span[@class='content font-weight-roman']/a[@href]").text	
-		print(county_type)
-		resi_estate['county'] = county_type
+		#county_type = driver.find_element_by_xpath("//span[@class='content font-weight-roman']/a[@href]").text	
+		#print(county_type)
+		#resi_estate['county'] = county_type
 	except:
 		pass
+
 
 
 	##resi_price = "289,900 \n Listed on price"
