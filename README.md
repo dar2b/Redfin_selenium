@@ -1,2 +1,2 @@
 # Redfin_selenium
-Scraping project for real estate pricing 
+Housing, as a bedrock of economies throughout the world, markets have shifted and moved through variations of its asset class. Specification, a home value dictates 'derived' products, and while a derived asset's definition holds, each homely facet makes its valuation that much more contrived and feature specific. Through this spider and experimentation we take on each feature with granular analysis to bring together features. 
